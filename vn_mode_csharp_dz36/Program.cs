@@ -10,10 +10,10 @@ Dictionary<string, string> dossiers = new Dictionary<string, string>();
 while (isOpen)
 {
     Console.WriteLine("Введите номер команды");
-    Console.WriteLine("1 - Добавить досье");
-    Console.WriteLine("2 - Показать все досье");
-    Console.WriteLine("3 - Удалить выбранное досье");
-    Console.WriteLine("4 - Выход из программы");
+    Console.WriteLine($"{CommandAddDossier} - Добавить досье");
+    Console.WriteLine($"{CommandShowAllDossiers} - Показать все досье");
+    Console.WriteLine($"{CommandDeleteDossier} - Удалить выбранное досье");
+    Console.WriteLine($"{CommandExit} - Выход из программы");
 
     string command = Console.ReadLine();
     Console.Clear();
@@ -21,7 +21,7 @@ while (isOpen)
     switch (command)
     {
         case CommandAddDossier:
-            AddDossier(ref dossiers);
+            AddDossier(dossiers);
             break;
 
         case CommandShowAllDossiers:
@@ -29,7 +29,7 @@ while (isOpen)
             break;
 
         case CommandDeleteDossier:
-            DeleteDossier(ref dossiers);
+            DeleteDossier(dossiers);
             break;
 
         case CommandExit:
@@ -47,25 +47,33 @@ while (isOpen)
 
 Console.WriteLine("Вы вышли из программы.");
 
-static void AddDossier(ref Dictionary<string, string> dossiers)
+static void AddDossier(Dictionary<string, string> dossiers)
 {
     Console.Write("Введите ФИО: ");
     string name = Console.ReadLine();
     Console.Write("Введите должность: ");
     string position = Console.ReadLine();
-    dossiers.Add(name, position);
-    Console.WriteLine("Досье успешно добавлено.");
+
+    if (dossiers.ContainsKey(name))
+    {
+        Console.WriteLine("Досье с таким ФИО уже существует.");
+    }
+    else
+    {
+        dossiers.Add(name, position);
+        Console.WriteLine("Досье успешно добавлено.");
+    }
 }
 
-static void DeleteDossier(ref Dictionary<string, string> dossiers)
+static void DeleteDossier(Dictionary<string, string> dossiers)
 {
     ShowDossier(dossiers);
     Console.Write("Введите номер досье, которое хотите удалить: ");
     string userInput = Console.ReadLine();
 
-    if (int.TryParse(userInput, out int resultParse) && resultParse > 0 && resultParse <= dossiers.Count)
+    if (int.TryParse(userInput, out int dossierNumber) && dossierNumber > 0 && dossierNumber <= dossiers.Count)
     {
-        var key = dossiers.Keys.ElementAt(resultParse - 1);
+        var key = dossiers.Keys.ElementAt(dossierNumber - 1);
         dossiers.Remove(key);
         Console.WriteLine("Досье успешно удалено.");
     }
@@ -78,10 +86,12 @@ static void DeleteDossier(ref Dictionary<string, string> dossiers)
 static void ShowDossier(Dictionary<string, string> dossiers)
 {
     Console.WriteLine("Все досье:");
-    int i = 1;
+
+    int dossierNumber = 1;
+
     foreach (var dossier in dossiers)
     {
-        Console.WriteLine($"{i}. {dossier.Key} - {dossier.Value}");
-        i++;
+        Console.WriteLine($"{dossierNumber}. {dossier.Key} - {dossier.Value}");
+        dossierNumber++;
     }
 }
